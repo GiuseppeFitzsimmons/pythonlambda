@@ -1,2 +1,3 @@
 jsonpickle==1.3
 aws-xray-sdk==2.4.3
+geoip2>=3.0.0
