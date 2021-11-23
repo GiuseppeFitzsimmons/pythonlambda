@@ -1,5 +1,6 @@
 {
   "requestContext":{
-    "sourceIp":"2a01:cb00:3d5:6200:9c2b:d20b:b07e:17ac"
+    "sourceIp":"2a01:cb00:3d5:6200:9c2b:d20b:b07e:17ac",
+    "path":"https://indie-fensible.pub/codicil/googleads"
   }
 }
