@@ -52,4 +52,4 @@ def lambda_handler(event, context):
             "body": ''
         })
 
-lambda_handler(sys.argv[1], sys.argv[2])
+#lambda_handler(sys.argv[1], sys.argv[2])
