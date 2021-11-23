@@ -20,25 +20,36 @@ def lambda_handler(event, context):
         book_campaign = str(event_path).split('/')[3]
         platform = str(event_path).split('/')[4]
     except:
-        print(error_object)
-        return error_object
+        print('error, probably failed to parse url')
+        return (
+                    {
+        "statusCode": 502,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": error_object
+    }
+        )
     try:
         response = geoip2.webservice.Client(639089, 'pKA4mu9VIQuHs7E9', host='geolite.info').country(event['requestContext']['sourceIp'])
-        json_log = json.dumps({"country":response.country.iso_code, "platform":platform, "book_campaign": book_campaign, "date":str(date.today()) })
+        json_log = {"country":response.country.iso_code.encode('ascii'), "platform":platform, "book_campaign": book_campaign, "date":str(date.today()) }
+        print(json_log)
         try:
             redirect_url = redirect[book_campaign][response.country.iso_code]
-            print(str(redirect_url))
-            return str(redirect_url)
         except KeyError:
             redirect_url = redirect[book_campaign]['default']
-            print(str(redirect_url))
-            return str(redirect_url)
     except:
         print('Cannot parse IP, setting to default')
-        json_log = json.dumps({"country":"invalid", "platform":platform, "book_campaign": book_campaign, "date":str(date.today()) })
+        json_log = {"country":"invalid", "platform":platform, "book_campaign": book_campaign, "date":str(date.today()) }
+        print(json_log)
         redirect_url = redirect[book_campaign]['default']
-        print(str(redirect_url))
-        return str(redirect_url)
-    print('json_log', json_log)
+    return({
+            "statusCode": 307,
+            "headers": {
+                "Content-Type": "application/json",
+                "location":str(redirect_url)
+            },
+            "body": ''
+        })
 
 lambda_handler(sys.argv[1], sys.argv[2])
