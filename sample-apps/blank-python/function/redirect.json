@@ -14,5 +14,8 @@
         "AU": "https://www.canteburry.com.au/dp/B08K99ZWN2",
         "IN": "https://www.canteburry.in/dp/B08K99ZWN2",
         "default": "https://www.canteburry.co.uk/dp/B08K99ZWN2"
+    },
+    "default": {
+        "default": "https.//www.google.fr"
     }
 }
