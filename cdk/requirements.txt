@@ -1,0 +1,6 @@
+#-e .
+
+aws-cdk.core
+aws-cdk.aws_lambda
+aws-cdk.aws_apigatewayv2
+aws-cdk.aws_apigatewayv2_integrations
