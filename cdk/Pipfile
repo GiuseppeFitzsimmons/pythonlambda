@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"aws-cdk.core" = "*"
+"aws-cdk.aws-lambda" = "*"
+"aws-cdk.aws-apigatewayv2" = "*"
+"aws-cdk.aws-apigatewayv2-integrations" = "*"
+"aws-cdk.aws-route53-targets" = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -1,7 +1,8 @@
 from aws_cdk import (
     core as cdk,
     aws_lambda,
-    aws_route53
+    aws_route53,
+    aws_apigateway
     # aws_sqs as sqs,
 )
 
@@ -9,10 +10,11 @@ from aws_cdk import (
 # the CDK's core module.  The following line also imports it as `core` for use
 # with examples from the CDK Developer's Guide, which are in the process of
 # being updated to use `cdk`.  You may delete this import if you don't need it.
-from aws_cdk import core
-from aws_cdk.aws_apigatewayv2_integrations import LambdaProxyIntegration
-import aws_cdk.aws_apigatewayv2 as apigwv2
+#from aws_cdk import core
+#from aws_cdk.aws_apigatewayv2_integrations import LambdaProxyIntegration
+#import aws_cdk.aws_apigatewayv2 as apigwv2
 import aws_cdk.aws_certificatemanager as acm
+import aws_cdk.aws_route53_targets
 
 
 class CdkStack(cdk.Stack):
@@ -27,51 +29,80 @@ class CdkStack(cdk.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_8,
         )
 
-        # The code that defines your stack goes here
-
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "CdkQueue",
-        #     visibility_timeout=cdk.Duration.seconds(300),
-        # )
-
-        lambda_function_integration = LambdaProxyIntegration(handler=lambda_function)
+        #lambda_function_integration = LambdaProxyIntegration(handler=lambda_function)
         
         cert_arn = "arn:aws:acm:us-east-1:209544401946:certificate/720b4dcc-e5d8-400b-9bbf-76e0fac4cbaa"
         domain_name = "indefensible.pub"
 
-        dn = apigwv2.DomainName(
-            self,
-            "DN",
-            domain_name=domain_name,
-            certificate=acm.Certificate.from_certificate_arn(self, "cert", cert_arn),
-        )
-
-        http_api = apigwv2.HttpApi(self, "indefensible_redirect", 
-        default_domain_mapping=apigwv2.DomainMappingOptions(
-                domain_name=dn, 
-                #mapping_key="foo"
-            ))
-
-        http_api.add_routes(
-            path="/redirect",
-            methods=[apigwv2.HttpMethod.GET],
-            integration=lambda_function_integration,
-        )
-
-        record = aws_route53.ARecord(self, 
-            zone='us-east-1',
-            record_name='www',
-            target=aws_route53.RecordTarget.from_alias(apigwv2.DomainNameAttributes(dn.regional_domain_name, dn.regional_hosted_zone_id))
-        )
-
-
-        #api = apigwv2.HttpApi(
-        #    self,
-        #    "HttpProxyProdApi",
-        #    default_integration=LambdaProxyIntegration(handler=lambda_function),
-        #    # https://${dn.domainName}/foo goes to prodApi $default stage
-        #    default_domain_mapping=apigwv2.DomainMappingOptions(
-        #        domain_name=dn, mapping_key="foo"
-        #    ),
+        #aws_apigateway.LambdaRestApi(self, "redirect_rest_api",
+        #    handler = lambda_function
         #)
+
+        #dn = aws_apigateway.DomainName(
+        #  self,
+        #  "DN",
+        #  domain_name=domain_name,
+        #  certificate=acm.Certificate.from_certificate_arn(self, "cert", cert_arn),
+        #)
+
+        #dn = aws_apigateway.DomainName(self, "DN",
+        #    #domain_name=aws_apigateway.DomainNameOptions(
+        #    #    domain_name=domain_name,
+        #    #    certificate=acm.Certificate.from_certificate_arn(self, "cert1", "arn:aws:acm:us-east-1:1111111:certificate/11-3336f1-44483d-adc7-9cd375c5169d")
+        #    #),
+        #    domain_name=domain_name,
+        #    certificate=acm.Certificate.from_certificate_arn(self, "cert2", "arn:aws:acm:us-east-1:1111111:certificate/11-3336f1-44483d-adc7-9cd375c5169d")                
+        #)
+
+        lambda_integration = aws_apigateway.LambdaIntegration(lambda_function)
+        api = aws_apigateway.RestApi(self,'redirect_api',
+            default_integration=lambda_integration,
+            domain_name=aws_apigateway.DomainNameOptions(
+                domain_name=domain_name,
+                certificate=acm.Certificate.from_certificate_arn(self, "cert", "arn:aws:acm:us-east-1:209544401946:certificate/720b4dcc-e5d8-400b-9bbf-76e0fac4cbaa")
+            )
+        )
+        api.root.add_method('GET',lambda_integration)
+        api.root.add_resource('r', default_integration=lambda_integration)
+
+        aws_route53.ARecord(self, 'redirect_record',
+            zone=aws_route53.HostedZone.from_hosted_zone_attributes(self, "HostedZone", 
+                hosted_zone_id='Z0003169E7U99ETG4Y92',
+                zone_name='indefensible.pub'
+            ),
+            target=aws_route53.RecordTarget.from_alias(aws_cdk.aws_route53_targets.ApiGateway(api))
+        )
+
+
+
+
+
+
+
+
+        #dn = apigwv2.DomainName(
+        #    self,
+        #    "DN",
+        #    domain_name=domain_name,
+        #    certificate=acm.Certificate.from_certificate_arn(self, "cert", cert_arn),
+        #)
+#
+        #http_api = apigwv2.HttpApi(self, "indefensible_redirect", 
+        #default_domain_mapping=apigwv2.DomainMappingOptions(
+        #        domain_name=dn
+        #    ))
+#
+        #http_api.add_routes(
+        #    path="/redirect",
+        #    methods=[apigwv2.HttpMethod.GET],
+        #    integration=lambda_function_integration,
+        #)
+        #record = aws_route53.ARecord(self, 'IndefensibleARecord',
+        #    zone=aws_route53.HostedZone.from_hosted_zone_attributes(self, "HostedZone", 
+        #        hosted_zone_id='Z0003169E7U99ETG4Y92',
+        #        zone_name='indefensible.pub'
+        #    ),
+        #    record_name='api',
+        #    target=aws_route53.RecordTarget.from_alias(aws_cdk.aws_route53_targets.ApiGatewayv2DomainProperties(str(http_api.api_id)+'.execute-api.us-east-1.amazonaws.com', dn.regional_hosted_zone_id))
+        #)
+#
