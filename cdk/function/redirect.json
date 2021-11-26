@@ -1,21 +1,33 @@
 {
     "codicil": {
         "US": "https://www.amazon.com/dp/B08K99ZWN2",
-        "CA": "https://www.amazon.com/dp/B08K99ZWN2",
+        "CA": "https://www.amazon.ca/dp/B08K99ZWN2",
         "GB": "https://www.amazon.co.uk/dp/B08K99ZWN2",
+        "IE": "https://www.amazon.co.uk/dp/B08K99ZWN2",
         "AU": "https://www.amazon.com.au/dp/B08K99ZWN2",
+        "NZ": "https://www.amazon.com.au/dp/B08K99ZWN2",
         "IN": "https://www.amazon.in/dp/B08K99ZWN2",
-        "default": "https://www.amazon.co.uk/dp/B08K99ZWN2"
+        "FR": "https://www.amazon.fr/dp/B08K99ZWN2",
+        "ES": "https://www.amazon.es/dp/B08K99ZWN2",
+        "DE": "https://www.amazon.de/dp/B08K99ZWN2",
+        "IT": "https://www.amazon.it/dp/B08K99ZWN2",
+        "default": "https://www.amazon.com/dp/B08K99ZWN2"
     },
-    "canteburry": {
-        "US": "https://www.canteburry.com/dp/B08K99ZWN2",
-        "CA": "https://www.canteburry.com/dp/B08K99ZWN2",
-        "GB": "https://www.canteburry.co.uk/dp/B08K99ZWN2",
-        "AU": "https://www.canteburry.com.au/dp/B08K99ZWN2",
-        "IN": "https://www.canteburry.in/dp/B08K99ZWN2",
-        "default": "https://www.canteburry.co.uk/dp/B08K99ZWN2"
+    "christmas": {
+        "US": "https://www.amazon.com/dp/B08YWS4R4P",
+        "CA": "https://www.amazon.ca/dp/B08YWS4R4P",
+        "GB": "https://www.amazon.co.uk/dp/B08YWS4R4P",
+        "IE": "https://www.amazon.co.uk/dp/B08YWS4R4P",
+        "AU": "https://www.amazon.com.au/dp/B08YWS4R4P",
+        "NZ": "https://www.amazon.com.au/dp/B08YWS4R4P",
+        "IN": "https://www.amazon.in/dp/B08YWS4R4P",
+        "FR": "https://www.amazon.fr/dp/B08YWS4R4P",
+        "ES": "https://www.amazon.es/dp/B08YWS4R4P",
+        "DE": "https://www.amazon.de/dp/B08YWS4R4P",
+        "IT": "https://www.amazon.it/dp/B08YWS4R4P",
+        "default": "https://www.amazon.com/dp/B08YWS4R4P"
     },
     "default": {
-        "default": "https://www.google.fr"
+        "default": "https://www.amazon.com/dp/B08K99ZWN2"
     }
 }

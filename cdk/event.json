@@ -1,5 +1,6 @@
 {
   "requestContext":{
-    "sourceIp":"127.0.0.1"
+    "sourceIp":"2a01:cb00:3d5:6200:9c2b:d20b:b07e:17ac",
+    "path":"/redirect/canteburry/googleads"
   }
 }

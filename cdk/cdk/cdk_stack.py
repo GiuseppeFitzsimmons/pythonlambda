@@ -62,8 +62,12 @@ class CdkStack(cdk.Stack):
                 certificate=acm.Certificate.from_certificate_arn(self, "cert", "arn:aws:acm:us-east-1:209544401946:certificate/720b4dcc-e5d8-400b-9bbf-76e0fac4cbaa")
             )
         )
-        api.root.add_method('GET',lambda_integration)
-        api.root.add_resource('r', default_integration=lambda_integration)
+        api_redirect_object = api.root.add_resource('redirect')
+        api_redirect_object.add_method('GET')
+        api_campaign_object = api_redirect_object.add_resource('{campaign}')
+        api_campaign_object.add_method('GET')
+        api_platform_object = api_campaign_object.add_resource('{platform}')
+        api_platform_object.add_method('GET')
 
         aws_route53.ARecord(self, 'redirect_record',
             zone=aws_route53.HostedZone.from_hosted_zone_attributes(self, "HostedZone", 

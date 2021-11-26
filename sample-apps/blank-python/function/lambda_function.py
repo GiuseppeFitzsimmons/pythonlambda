@@ -12,7 +12,7 @@ def lambda_handler(event, context):
         book_campaign = str(event_path).split('/')[3]
         platform = str(event_path).split('/')[4]
     except:
-        print('error, probably failed to parse url', event)
+        print('error, probably failed to parse url')
         return (
                     {
             "statusCode": 307,
