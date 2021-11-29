@@ -14,6 +14,7 @@ from aws_cdk import (
 #from aws_cdk.aws_apigatewayv2_integrations import LambdaProxyIntegration
 #import aws_cdk.aws_apigatewayv2 as apigwv2
 import aws_cdk.aws_certificatemanager as acm
+from aws_cdk.aws_elasticloadbalancingv2 import TargetGroupBase
 import aws_cdk.aws_route53_targets
 
 
@@ -28,38 +29,26 @@ class CdkStack(cdk.Stack):
             handler="lambda_function.lambda_handler",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
         )
-
-        #lambda_function_integration = LambdaProxyIntegration(handler=lambda_function)
+        lambda_function_dev = aws_lambda.Function(
+            self,
+            id="lambda_function_dev",
+            code=aws_lambda.Code.from_asset("./deploy_function_dev"),
+            handler="lambda_function.lambda_handler",
+            runtime=aws_lambda.Runtime.PYTHON_3_8,
+        )
         
         cert_arn = "arn:aws:acm:us-east-1:209544401946:certificate/720b4dcc-e5d8-400b-9bbf-76e0fac4cbaa"
         domain_name = "indefensible.pub"
-
-        #aws_apigateway.LambdaRestApi(self, "redirect_rest_api",
-        #    handler = lambda_function
-        #)
-
-        #dn = aws_apigateway.DomainName(
-        #  self,
-        #  "DN",
-        #  domain_name=domain_name,
-        #  certificate=acm.Certificate.from_certificate_arn(self, "cert", cert_arn),
-        #)
-
-        #dn = aws_apigateway.DomainName(self, "DN",
-        #    #domain_name=aws_apigateway.DomainNameOptions(
-        #    #    domain_name=domain_name,
-        #    #    certificate=acm.Certificate.from_certificate_arn(self, "cert1", "arn:aws:acm:us-east-1:1111111:certificate/11-3336f1-44483d-adc7-9cd375c5169d")
-        #    #),
-        #    domain_name=domain_name,
-        #    certificate=acm.Certificate.from_certificate_arn(self, "cert2", "arn:aws:acm:us-east-1:1111111:certificate/11-3336f1-44483d-adc7-9cd375c5169d")                
-        #)
+        certificate=acm.Certificate.from_certificate_arn(self, "cert", cert_arn)
 
         lambda_integration = aws_apigateway.LambdaIntegration(lambda_function)
+        lambda_integration_dev = aws_apigateway.LambdaIntegration(lambda_function_dev)
+
         api = aws_apigateway.RestApi(self,'redirect_api',
             default_integration=lambda_integration,
             domain_name=aws_apigateway.DomainNameOptions(
                 domain_name=domain_name,
-                certificate=acm.Certificate.from_certificate_arn(self, "cert", "arn:aws:acm:us-east-1:209544401946:certificate/720b4dcc-e5d8-400b-9bbf-76e0fac4cbaa")
+                certificate=certificate
             )
         )
         api_redirect_object = api.root.add_resource('redirect')
@@ -68,6 +57,13 @@ class CdkStack(cdk.Stack):
         api_campaign_object.add_method('GET')
         api_platform_object = api_campaign_object.add_resource('{platform}')
         api_platform_object.add_method('GET')
+
+        api_dev_redirect_object = api.root.add_resource('redirect_dev')
+        api_dev_redirect_object.add_method('GET',lambda_integration_dev)
+        api_campaign_dev_object = api_dev_redirect_object.add_resource('{campaign}')
+        api_campaign_dev_object.add_method('GET')
+        api_platform_dev_object = api_campaign_dev_object.add_resource('{platform}')
+        api_platform_dev_object.add_method('GET')
 
         aws_route53.ARecord(self, 'redirect_record',
             zone=aws_route53.HostedZone.from_hosted_zone_attributes(self, "HostedZone", 

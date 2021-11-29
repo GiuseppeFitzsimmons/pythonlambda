@@ -2,6 +2,7 @@
 package
 package-lock.json
 deploy_function
+deploy_function_dev
 __pycache__
 .pytest_cache
 .env
